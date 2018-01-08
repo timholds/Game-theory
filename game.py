@@ -1,7 +1,6 @@
 # Code to solve a single game between two players
 # Tim Holdsworth, January 7st, 2018
 from sympy import *
-from optlang import Model, Variable, Constraint, Objective
 
 # What are the variables a class should share
 # What are the variables an instance of a class should share

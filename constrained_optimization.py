@@ -1,8 +1,30 @@
 from optlang import Model, Variable, Constraint, Objective
 
+def constrained_optimzation(objective_function, *variables, **constraints):
+    # Objective function
+    obj = Objective(objective_function, direction='max')
+
+    # Symbolic variables
+    variables = []
+    for i in range(len(variables)):
+        print('Variable {num}: '.format(i) + str(variables[i]))
+        variable[i] = Variable(variables[i], lb=0)
+
+
+    for key, value in constraints.items():
+        print(key, value)
+
+    # Constraints
+    constraints = []
+    for i in range(len(constraints)):
+        print('Constraint {num}: '.format(i) + str(constraints[i]))
+        constraint[i] = Constraint(constraints[i], lb=0)
+
+constrained_optimzation(P**2, P, constraint = 2)
+
 # All the (symbolic) variables are declared, with a name and optionally a lower and/or upper bound.
-P = Variable('x1', lb=0)
-Q = Variable('x2', lb=0)
+x1 = Variable('x1', lb=0)
+x2 = Variable('x2', lb=0)
 
 # A constraint is constructed from an expression of variables and a lower and/or upper bound (lb and ub).
 c1 = Constraint(P = 1 - Q)
