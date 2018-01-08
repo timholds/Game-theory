@@ -1,5 +1,6 @@
 # Code to solve a single game between two players
 # Tim Holdsworth, January 7st, 2018
+
 from sympy import *
 Q = Symbol('Q')
 p = Symbol('p')
@@ -9,7 +10,6 @@ a = Symbol('a')
 s = Symbol('s')
 w = Symbol('w')
 x = Symbol('x')
-
 
 # What are the variables a class should share
 # What are the variables an instance of a class should share
@@ -68,46 +68,54 @@ class Player():
         print("deleter of x called")
         del self._utility
 
-    # Example of how to use
-    #p1 = Player()
-    #p1.utility = 'foo'  # setter called
-    #foo = p1.utility  # getter called
-    #del p1.utility  # deleter called
+    # A function to get the utility function for a given player in a given case
+    def generate_utilty_function(player, *cases):
+        '''
+        :param player: 'Retailer', 'Farmer', or 'Consumer'
+        :param cases: 'FTOrg', 'FTConv', 'NFTOrg', 'NFTConv'
+        :return: utility function that is symbolically differentiable
+        '''
+
+        wholesale_price = None
+        retail_price = None
+
+        Q = Symbol('Q')
+        p = Symbol('p')
+        k = Symbol('k')
+        w = Symbol('w')
+        wg = Symbol('wg')
+        wc = Symbol('wg')
+        w = wg + wc
+
+        # Consumer demand function. I don't think I need this here, but I need it somewhere
+        # Q = k + q + as - p
 
 
-    # A function for optimizing utility
-    def optimize_utility(self):
-        pass
+        # TODO fill in the different values in the different cases
+        for case in cases:
+            if player == 'Retailer':
+                if case == 'FTOrg':
+                    w =
+                elif case == 'FTConv':
+                    p =
+                    w =
+                    q = 0
+                    a = 1
+                # The non fair trade cases
+                elif case == 'NFTOrg':
+                    w = wg
+                    a = 1
+                elif case == 'NFTConv':
+                    w = wc
+                    q = 0
+                    s = 0
+                else:
+                    print('Case not recognized')
 
-    # A function that defines utility function
-    def utility_function(self):
-        pass
+            utility = p * q - w * q  # Retailer profit function
+            return utility
 
-def generate_utilty_function(player, *cases):
-    '''
-    :param player: 'Retailer', 'Farmer', or 'Consumer'
-    :param cases: 'FTOrg', 'FTConv', 'NFTOrg', 'NFTConv'
-    :return: utility function that is symbolically differentiable
-    '''
-
-    wholesale_price = None
-    retail_price = None
-
-    Q = Symbol('Q')
-    p = Symbol('p')
-    k = Symbol('k')
-    w = Symbol('w')
-    wg = Symbol('wg')
-    wc = Symbol('wg')
-    w = wg + wc
-
-    # Consumer demand function. I don't think I need this here, but I need it somewhere
-    # Q = k + q + as - p
-
-
-    # TODO fill in the different values in the different cases
-    for case in cases:
-        if player == 'Retailer':
+            elif player == 'Farmer':
             if case == 'FTOrg':
                 w =
             elif case == 'FTConv':
@@ -126,57 +134,41 @@ def generate_utilty_function(player, *cases):
             else:
                 print('Case not recognized')
 
-        utility = p*q - w*q # Retailer profit function
-        return utility
-
-
-        elif player == 'Farmer':
-            if case == 'FTOrg':
-                w =
-            elif case == 'FTConv':
-                p =
-                w =
-                q = 0
-                a = 1
-            # The non fair trade cases
-            elif case == 'NFTOrg':
-                w = wg
-                a = 1
-            elif case == 'NFTConv':
-                w = wc
-                q = 0
-                s = 0
-            else:
-                print('Case not recognized')
-
-        farmer_profit_function = (w*q)-(a+b*qhat)*qhat
+        farmer_profit_function = (w * q) - (a + b * qhat) * qhat
         utility = farmer_profit_function
         return utility
 
         # TODO decide if we need to do this for customer, since we dont have to optimize cust utility function
-        '''
-        elif player == 'Consumer':
-            if case == 'FTOrg':
-                w =
-            elif case == 'FTConv':
-                p =
-                w =
-                q = 0
-                a = 1
-            # The non fair trade cases
-            elif case == 'NFTOrg':
-                w = wg
-                a = 1
-            elif case == 'NFTConv':
-                w = wc
-                q = 0
-                s = 0
-            else:
-                print('Case not recognized')
+            '''
+            elif player == 'Consumer':
+                if case == 'FTOrg':
+                    w =
+                elif case == 'FTConv':
+                    p =
+                    w =
+                    q = 0
+                    a = 1
+                # The non fair trade cases
+                elif case == 'NFTOrg':
+                    w = wg
+                    a = 1
+                elif case == 'NFTConv':
+                    w = wc
+                    q = 0
+                    s = 0
+                else:
+                    print('Case not recognized')
 
-        utility =   # Consumer utility function
-        return utility
-        '''
+            utility =   # Consumer utility function
+            return utility
+            '''
+
+
+    # Example of how to use
+    # p1 = Player()
+    # p1.utility = 'foo'  # setter called
+    # foo = p1.utility  # getter called
+    # del p1.utility  # deleter called
 
 
     # farmer = Player
@@ -184,47 +176,52 @@ def generate_utilty_function(player, *cases):
     # farmer.utilty = farmer_profit_function
     # farmer.maximize_utility() -returns utility function as an expression optimized for one value
 
+    # A function for optimizing utility symbolically
+    def optimize_utility_function(self, function, var):
+        ''' Function to symbolically maximize a function and return the maximum value'''
 
-# utility functions are already determined for all players*game*stage
-# --- For any game at any stage, we know the utility for any player
-# players have different utility at different game*stages
-# players optimize their utility functions
-# What is the most obvious inheritance - maybe players persist only in a stage -game
-# for example, in each game, creates two player objects, assign each one a utility function accordingly
+        # Calculate the derivative of the post-substitution function wrt newvar
+        try:
+            deriv = diff(function, var)
+        except Exception as e:
+            print(e)
+            deriv = 'Could not calculate that ish for ya rn'
+        finally:
+            print('In terms of {}, derivative of Retailer profit: '.format(var) + str(deriv))
 
-# Player objects must be able to set, get, update utility function
-# Player objects must be able to optimize utility function
-
-# What is the outcome of a stage-game? Decision maker has a decision boundary piecewise
-
+        max = solve(deriv, var)
+        print('Max retail profit occurs when {} = '.format(var) + 'is: ' + str(max[0]))
+        return max
+        #return optimized_function
 
 class Game():
     ''' A Game Object for a single two player game'''
 
-    def __init__(self, first, last):
-        self.firstname = first
-        p1 = Player()
-        p2 = Player()
+    def __init__(self):
+        self.retailer = Player()
+        self.consumer = Player()
 
     def solve_game(self, deciding_player):
         deciding_player = None
         result = deciding_player.optimize_utility()
         return result
 
-class FirstStageGame(Game):
+class FirstStageGame(Game, decision_player):
 
-    def __init__(self, player1, player2, p1utility_function, p2utility_function):
-        Game.__init__(self, player1, player2)
-        self.p1utility = consumer_demand_function(cases[0])
-        self.p2utility = p2utility_function
+    def __init__(self):
+        Game.__init__(self)
 
 
+    # Set the utility for the player objects
+    def set_utility(self):
+        self.retailer.utility = generate_utilty_function(cases[0], 'Retailer')
+        self.consumer.utility = generate_utilty_function(cases[0], 'Consumer')
 
-    retailer = Player()
-    retailer.utility = retailer_profit_function(cases[0])
-    consumer = Player()
-    consumer.utility = consumer_demand_function(cases[0])
+    result = Game().solve_game(decision_player)
+    return result
 
+game = Game()
+FirstStageGame(game, 'Retailer').set_utility()
 
 # all games have players, all players have utility functions
 class FourthStageGame(Game):
@@ -253,31 +250,26 @@ def substitute2(objective_equation, sub_equation, oldvar, newvar):
 #substitute2()
 
 
-def substitute(case, oldvar, newvar):
-    ''' A substitution'''
+def substitute(case, player, oldvar, newvar, *mainfunc, extrafunc):
+    ''' A substitution machine'''
 
     #Q = consumer_demand_function(case) # Q = k + q - p + (a * s)
     #print(str(Q))
     #Q = k + q - p + (a * s)
 
-    # TODO make retailer_profit_function(case) that returns p*Q - w*Q
-    # r_profit = retailer_profit_function(case) #p*Q - w*Q
-    r_profit = p * Q - w * Q
-    print('Retailer profit is1aja: ' + str(r_profit))
+    func = player.utility
+    # Substitute the new variable equation into the old variable one
+    func_post_sub = func.subs(oldvar, newvar)
+    # Print outhe the {name of this instance of player class, like 'retailer' or 'farmer'}
+    # profit is and the new string of the profit function
+    print('{} profit is : '.format(player.__name__) + str(func_post_sub))
+    #print('Retailer profit in terms of {} (where {} substituted out)'.format(newvar, oldvar) + 'is: ' + str(func_post_sub))
 
-    # Substitute old variables in for new one in the profit equation
-    r_profit_sub = r_profit.subs(oldvar, newvar)
-    print('Retailer profit in terms of {} (where {} substituted out)'.format(newvar, oldvar) + 'is: ' + str(
-        r_profit_sub))
+    return func_post_sub
 
-    # Calculate the derivative of the post-substitution function wrt newvar
-    deriv = diff(r_profit_sub, newvar)
-    print('In terms of {}, derivative of Retailer profit: '.format(newvar) + str(deriv))
 
-    max = solve(deriv, newvar)
-    print('Max retail profit occurs when {} = '.format(newvar) + 'is: ' + str(max[0]))
-    print('yo')
-    return max
+
+
 
 substitute(cases[0], Q, p)
 
@@ -432,6 +424,7 @@ def find_max(function, variable, **kwargs):
 
     farmer_profit_function(cases[0])
 
+#retailer_profit = p * Q - w * Q
 
 # Instantiate all exogenous variables
 # TODO decide if this should be part of Game class or NthStageGame class
@@ -442,6 +435,17 @@ def __init__(self, q, a, s, k):
     self.s = s
     self.k = k
 
+# utility functions are already determined for all players*game*stage
+# --- For any game at any stage, we know the utility for any player
+# players have different utility at different game*stages
+# players optimize their utility functions
+# What is the most obvious inheritance - maybe players persist only in a stage -game
+# for example, in each game, creates two player objects, assign each one a utility function accordingly
+
+# Player objects must be able to set, get, update utility function
+# Player objects must be able to optimize utility function
+
+# What is the outcome of a stage-game? Decision maker has a decision boundary piecewise
 
 
 """
