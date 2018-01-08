@@ -1,6 +1,7 @@
 # Code to solve a single game between two players
 # Tim Holdsworth, January 7st, 2018
-import scipy.optimize
+from sympy import *
+from optlang import Model, Variable, Constraint, Objective
 
 # What are the variables a class should share
 # What are the variables an instance of a class should share
@@ -37,76 +38,132 @@ import scipy.optimize
 
 cases = ['FTOrg', 'FTConv', 'NFTOrg', 'NFTConv']
 
-def consumer_demand_function(*cases=cases[0]):
-    ''''''
-
-    q, a, s, k = None
-    P = None
-
-    # Q is consumer demand function that is true in all cases
-    Q = q + a * s + k - P
-    for case in cases:
-    # The fair trade cases
-    if case == 'FTOrg':
-        pass
-    else if case == 'FTConv':
-        q = 0 # since
-        a = 1
-    # The non fair trade cases
-    else if case == 'NFTOrg':
-        a = 1
-    else if case == 'NFTConv':
-
-    return demand
-
-
-# Instantiate all exogenous variables
-def __init__(self, q, a, s, k):
-    self.q = a
-    self.a = a
-    self.s = s
-    self.k = k
-
-
 class Player():
     ''' An object to hold a player '''
 
+    def __init__(self):
+        self._utility = None
+
+    @property
+    def utility(self):
+        """I'm the 'x' property."""
+        print("getter of x called")
+        return self._utility
+
+    @x.setter
+    def utility(self, value):
+        print("setter of x called")
+        self._utility = value
+
+    @x.deleter
+    def utility(self):
+        print("deleter of x called")
+        del self._utility
+
+    # Example of how to use
+    p1 = Player()
+    p1.utility = 'foo'  # setter called
+    foo = p1.utility  # getter called
+    del p1.utility  # deleter called
+
+
+    # A function for optimizing utility
+    def optimize_utility(self):
+        pass
     # A function that defines utility function
     def utility_function(self):
-
-
-class Game():
-    ''' A Game Object for a single two player game'''
-
-    # A function to solve for the nash equilibrium of a game
-    def solver(self):
-        solution = None
-        # What type of thing is a solution to a game? Its the circumstances
-        return solution
-
-
-def find_unconstrained_max(utilility_function):
-    utility_function.optimize
-
-
-# Let the arguments be the constraints
-def find_constrained_max(*args):
-    # Do stuff with Lagrangian optimization
-    for arg in args:
-
         pass
 
+    @setattr()
+    def profit(self):
+        pass
 
-# TODO figure out what data structure to pass around constraints with
+# Function to calculate consumer_demand Q in a given case for Stage4Games
+def consumer_demand_function(*cases):
+    ''' Function to determine Q in a given case for a given set of params q, a, s, and k
+        Example function call would be consumer_demand_function(cases[0]) for FTOrg case'''
 
-# Let the arguments be the constraints, if they exist
-def find_max(**kwargs):
-    # If no constraints were passed in, get the unconstrained_max
-    if kwargs is not None:
-        find_unconstrained_max()
-    else:
-        find_constrained_max(args)
+    # TODO initialize these to the values that you want them to be
+    q, a, s, k = None
+    P = None
 
+    for case in cases:
+        # The fair trade cases
+        if case == 'FTOrg':
+            pass
+        elif case == 'FTConv':
+            q = 0 # since
+            a = 1
+        # The non fair trade cases
+        elif case == 'NFTOrg':
+            a = 1
+        elif case == 'NFTConv':
+            q = 0
+            s = 0
+        else:
+            print('Case not recognized')
+
+        # Q is consumer demand function that is true in all cases. Values of a, s,
+        Q = k + q + a * s - P
+
+        print('The consumer demand in case {case} '.format(case) + 'is' + str(Q))
+        return Q
+
+# Function to calculate retailer_profit pi_r in a given case for Stage4Games
+def retailer_profit_function(*cases):
+    for case in cases:
+        # The fair trade cases
+        if case == 'FTOrg':
+            consumer_demand = consumer_demand_function(case)
+        elif case == 'FTConv':
+            consumer_demand = consumer_demand_function(case)
+        # The non fair trade cases
+        elif case == 'NFTOrg':
+            consumer_demand = consumer_demand_function(case)
+        elif case == 'NFTConv':
+            consumer_demand = consumer_demand_function(case)
+        else:
+            print('Case not recognized')
+
+        retail_price = P
+        wholesale_price = w+wg
+
+        retailer_profit = (retail_price - wholesale_price) * consumer_demand
+        return retailer_profit
+
+    #retailer = Player()
+    #retailer.utility = retailer_profit_function(cases[0])
+
+# Function to calculate farmer_profit pi_f in a given case for Stage2&3Games
+def farmer_profit_function(*cases):
+    ''' Calculate a farmer's profut function in a given case'''
+
+    # Define w as marginal price increase for fair trade, wg as marginal price increase for organic
+    for case in cases:
+        # The fair trade cases
+        if case == 'FTOrg':
+            pass
+        elif case == 'FTConv':
+            wg = 0
+        # The non fair trade cases
+        elif case == 'NFTOrg':
+            w = 0
+        elif case == 'NFTConv':
+            w = 0
+            wg = 0
+        else:
+            print('Case not recognized')
+
+        wholesale_price = wc + w + wg
+        production_cost = a + b*Q
+
+        farmer_profit_function = wholesale_price - production_cost
+        return farmer_profit_function
+
+    # farmer = Player
+    # farmer_profit_function = farmer_profit_function(case[0])
+    # farmer.utilty = farmer_profit_function
+    # farmer.maximize_utility() -returns utility function as an expression optimized for one value
 
 def main():
 
@@ -144,10 +201,109 @@ for case in cases:
     game1 = 1ststagegame(farmer, retailer)
     sol1 = game1.solver()
 
-#Class Game() -> subclass nthstagegame (which has utility builtin)
+class Game():
+    ''' A Game Object for a single two player game'''
+
+    def __init__(self, first, last):
+        self.firstname = first
+        p1 = Player()
+        p2 = Player()
+
+    def solve_game(self, deciding_player):
+        deciding_player = None
+        result = deciding_player.optimize_utility()
+        return result
+
+class FirstStageGame(Game):
+
+    def __init__(self, player1, player2, p1utility_function, p2utility_function):
+        Game.__init__(self, player1, player2)
+        self.p1utility = consumer_demand_function(cases[case])
+        self.p2utility = p2utility_function
+
+
+
+    #retailer = Player()
+    retailer.utility = retailer_profit_function(cases[case])
+    consumer = Player()
+    consumer.utility = consumer_demand_function(cases[case])
+
+
+# Consistent over all
+consumer.profit = utility - retail_price
+retailer.profit = retail_price - wholesale_price
+farmer.profit =  wholesale_price - production_cost
+
+
 # all games have players, all players have utility functions
-class 4thStageGame(Game):
+class FourthStageGame(Game):
+
+    #
+    def __init__(self, player1, player2, p1utility_function, p2utility_function):
+        Game.__init__(self, player1, player2)
+        self.p1utility = p1utility_function
+        self.p2utility = p2utility_function
 
 
-    def __init__(self, player1, player2):
-        super(Game)
+    def GetEmployee(self):
+        return self.Name() + ", " + self.staffnumber
+
+
+
+
+
+
+# ---------- A bunch of optimization stuff that might be better done with a library
+# TODO figure out what data structure to pass around constraints with
+def unconstrained_optimization(function, variable):
+    deriv = diff(function, variable)
+    return deriv
+
+
+def fits(*args):
+    for arg in args:
+        constraint = arg
+        if function >= constraint:
+            return True
+        else:
+            return False
+
+# Let the args be the constraints
+# TODO decide if I need to pass variable here also
+def fits_constraints(function, *args):
+    # For each constraint, get the function of the max that fits the constraint
+    for arg in args:
+        fits(arg)
+
+# Let the arguments be the constraints
+def constrained_optimzation(function, variable, **kwargs):
+    # Do stuff with Lagrangian optimization
+    unconstrained_max = unconstrained_optimization(function, variable)
+    for arg in kwargs:
+        pass
+    if unconstrained_max.fits_constraints() == True
+
+# Let the arguments be the constraints, if they exist
+def find_max(function, variable, **kwargs):
+    # If no constraints were passed in, get the unconstrained_max
+    if kwargs is None:
+        unconstrained_optimization()
+    else:
+        constrained_optimzation(function, variable, **kwargs)
+
+
+# A function to solve for the nash equilibrium of a game
+    def solver(self):
+        solution = None
+        # What type of thing is a solution to a game? Its the circumstances
+        return solution
+
+
+# Instantiate all exogenous variables
+# TODO decide if this should be part of Game class or NthStageGame class
+# Thought - game because they will be shared across the iteration of games
+def __init__(self, q, a, s, k):
+    self.q = a
+    self.a = a
+    self.s = s
+    self.k = k
