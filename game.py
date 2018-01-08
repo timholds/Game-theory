@@ -69,7 +69,8 @@ class Player():
         del self._utility
 
     # A function to get the utility function for a given player in a given case
-    def generate_utilty_function(player, *cases):
+    @classmethod
+    def generate_utilty_function(cls, player, *cases):
         '''
         :param player: 'Retailer', 'Farmer', or 'Consumer'
         :param cases: 'FTOrg', 'FTConv', 'NFTOrg', 'NFTConv'
@@ -163,36 +164,36 @@ class Player():
             return utility
             '''
 
-
-    # Example of how to use
-    # p1 = Player()
-    # p1.utility = 'foo'  # setter called
-    # foo = p1.utility  # getter called
-    # del p1.utility  # deleter called
-
-
-    # farmer = Player
-    # farmer_profit_function = farmer_profit_function(case[0])
-    # farmer.utilty = farmer_profit_function
-    # farmer.maximize_utility() -returns utility function as an expression optimized for one value
-
-    # A function for optimizing utility symbolically
-    def optimize_utility_function(self, function, var):
-        ''' Function to symbolically maximize a function and return the maximum value'''
+    # A function for optimizing symbolically
+    def optimize(function, varib):
+        ''' Function to symbolically maximize a function and return the maximum value
+            :returns the (hopefully) global max of the function with respect to varib
+        '''
 
         # Calculate the derivative of the post-substitution function wrt newvar
         try:
-            deriv = diff(function, var)
+            deriv = diff(function, varib)
         except Exception as e:
             print(e)
             deriv = 'Could not calculate that ish for ya rn'
         finally:
-            print('In terms of {}, derivative of Retailer profit: '.format(var) + str(deriv))
+            print('In terms of {}, derivative of profit: '.format(varib) + str(deriv))
 
-        max = solve(deriv, var)
-        print('Max retail profit occurs when {} = '.format(var) + 'is: ' + str(max[0]))
+        max = solve(deriv, varib)
+        print('Max retail profit occurs when {} = '.format(varib) + 'is: ' + str(max[0]))
         return max
-        #return optimized_function
+
+# Overall high level solution
+# Based on a GUI, get the overall structure of a problem, including type of game and # of nodes/forks/etc
+# (In the future maybe this auto structure generation could be done by NLP)
+# Generate the game tree data structure
+# Start solving the game tree recursively. put all nodes in a path depth wise in queue
+# For each game, solve the subgame perfect equilibrium by:
+# Create an NthGameObject
+# Set utilities, optimize someone, get a new function in terns of the variable that's next in your chain
+# Important -- need to know order of decisions in order to know which variables you are trying to substitute in & out for
+# use this new sub'ed in function to solve the problem for the next variable in the q
+# repeat this until you only have a certain amount of variables left
 
 class Game():
     ''' A Game Object for a single two player game'''
@@ -205,6 +206,14 @@ class Game():
         deciding_player = None
         result = deciding_player.optimize_utility()
         return result
+
+# TODO resolve NthStageGame to be able to work as tempalte for FirstStageGame and delete FirstStageGame code
+class NthStageGame(Game, cases[0], player1, player2, decision_player):
+    # Each stage has players
+    p1 = player1
+    p2 = player2
+    # Each stage has its own payoffs - set the payoffs by
+    p1.generate_utility_function()
 
 class FirstStageGame(Game, decision_player):
 
@@ -220,58 +229,31 @@ class FirstStageGame(Game, decision_player):
     result = Game().solve_game(decision_player)
     return result
 
-game = Game()
-FirstStageGame(game, 'Retailer').set_utility()
+# Use the substitutions in the solver algorithm. thats what it means to solve a subgame? - get the constrained maximum
+def substitute_functions(mainfunction, oldvar, newvar, newvarLemma):
+    ''' A substitution machine for functions'''
 
-# all games have players, all players have utility functions
-class FourthStageGame(Game):
-
-    #
-    def __init__(self, player1, player2, p1utility_function, p2utility_function):
-        Game.__init__(self, player1, player2)
-        self.p1utility = p1utility_function
-        self.p2utility = p2utility_function
-
-
-    def GetEmployee(self):
-        return self.Name() + ", " + self.staffnumber
-
-# a soln should inherit w from its game
-# a soln maps multiple eq with mult variables into less eq with less variables
-def substitute2(objective_equation, sub_equation, oldvar, newvar):
-    f1 = objective_equation
-    f2 = sub_equation
-    f3 = f1.subs(oldvar, newvar)
-    print('swag')
-    print(f3)
-
-
-#(Q = k + q - p + (a * s)), (p * Q - w * Q), p, Q)
-#substitute2()
-
-
-def substitute(case, player, oldvar, newvar, *mainfunc, extrafunc):
-    ''' A substitution machine'''
-
-    #Q = consumer_demand_function(case) # Q = k + q - p + (a * s)
-    #print(str(Q))
-    #Q = k + q - p + (a * s)
-
-    func = player.utility
-    # Substitute the new variable equation into the old variable one
-    func_post_sub = func.subs(oldvar, newvar)
-    # Print outhe the {name of this instance of player class, like 'retailer' or 'farmer'}
-    # profit is and the new string of the profit function
-    print('{} profit is : '.format(player.__name__) + str(func_post_sub))
-    #print('Retailer profit in terms of {} (where {} substituted out)'.format(newvar, oldvar) + 'is: ' + str(func_post_sub))
+    # Substitute newvarLemma for oldvar in mainfunction
+    func = mainfunction
+    func_post_sub = func.subs(oldvar, newvarLemma)
+    print('Function in terms of {} (where {} substituted out)'.format(newvar, oldvar) + 'is: ' + str(func_post_sub))
 
     return func_post_sub
 
+def solver(func, oldvar, newvar, *args):
+    # Args here are the lemma equations we can use to substitute
+    for arg in args:
+        updated_func = substitute_functions(func, arg, oldvar, newvar)
+    return updated_func
 
+    # How to solve a game with constraints? How to optimize for a variable under constraints?
 
+def main():
+    game = Game()
+    for game in game_tree:
+        solve(game)
+    FirstStageGame(game, 'Retailer').set_utility()
 
-
-substitute(cases[0], Q, p)
 
 
 
@@ -425,6 +407,17 @@ def find_max(function, variable, **kwargs):
     farmer_profit_function(cases[0])
 
 #retailer_profit = p * Q - w * Q
+# Example of how to use
+    # p1 = Player()
+    # p1.utility = 'foo'  # setter called
+    # foo = p1.utility  # getter called
+    # del p1.utility  # deleter called
+
+
+    # farmer = Player
+    # farmer_profit_function = farmer_profit_function(case[0])
+    # farmer.utilty = farmer_profit_function
+    # farmer.maximize_utility() -returns utility function as an expression optimized for one value
 
 # Instantiate all exogenous variables
 # TODO decide if this should be part of Game class or NthStageGame class
@@ -464,3 +457,10 @@ for case in cases:
     game1 = 1ststagegame(farmer, retailer)
     sol1 = game1.solver()
 """
+
+def substitute2(objective_equation, sub_equation, oldvar, newvar):
+    f1 = objective_equation
+    f2 = sub_equation
+    f3 = f1.subs(oldvar, newvar)
+    print('swag')
+    print(f3)
