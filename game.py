@@ -84,126 +84,100 @@ class Player():
         pass
 
 def generate_utilty_function(player, *cases):
-    q = Symbol('q')
-    a = Symbol('a')
-    s = Symbol('s')
-    w = Symbol('w')
-    wg = Symbol('wg')
-    for case in cases:
-        if player == 'Consumer':
-            pass
-        elif player == 'Retailer':
-            pass
-        elif player == 'Farmer':
-            pass
+    '''
+    :param player: 'Retailer', 'Farmer', or 'Consumer'
+    :param cases: 'FTOrg', 'FTConv', 'NFTOrg', 'NFTConv'
+    :return: utility function that is symbolically differentiable
+    '''
 
+    wholesale_price = None
+    retail_price = None
 
-
-# Function to calculate consumer_demand Q in a given case for Stage4Games
-def consumer_demand_function(*cases):
-    ''' Function to determine Q in a given case for a given set of params q, a, s, and k
-        Example function call would be consumer_demand_function(cases[0]) for FTOrg case'''
-
-
-    for case in cases:
-        # The fair trade cases
-        if case == 'FTOrg':
-            q = q
-        elif case == 'FTConv':
-            q = 0 # since
-            a = 1
-        # The non fair trade cases
-        elif case == 'NFTOrg':
-            a = 1
-        elif case == 'NFTConv':
-            q = 0
-            s = 0
-        else:
-            print('Case not recognized')
-
-        # Q is consumer demand function that is true in all cases. Values of a, s,
-        Q = k + q - p + (a * s)
-
-        print('The consumer demand in case {} '.format(case) + 'is ' + str(Q))
-        return Q
-
-# Function to calculate retailer_profit pi_r in a given case for Stage4Games
-def retailer_profit_function(*cases):
+    Q = Symbol('Q')
+    p = Symbol('p')
+    k = Symbol('k')
     w = Symbol('w')
     wg = Symbol('wg')
     wc = Symbol('wg')
     w = wg + wc
-    wholesale_price = None
+
+    # Consumer demand function. I don't think I need this here, but I need it somewhere
+    # Q = k + q + as - p
+
+
+    # TODO fill in the different values in the different cases
     for case in cases:
-        # The fair trade cases
-        if case == 'FTOrg':
-            consumer_demand = consumer_demand_function(case)
-            wholesale_price = w
-        elif case == 'FTConv':
-            consumer_demand = consumer_demand_function(case)
-            wholesale_price = w
-        # The non fair trade cases
-        elif case == 'NFTOrg':
-            consumer_demand = consumer_demand_function(case)
-            wholesale_price = wg
-        elif case == 'NFTConv':
-            consumer_demand = consumer_demand_function(case)
-            wholesale_price = wc
-        else:
-            print('Case not recognized')
+        if player == 'Retailer':
+            if case == 'FTOrg':
+                w =
+            elif case == 'FTConv':
+                p =
+                w =
+                q = 0
+                a = 1
+            # The non fair trade cases
+            elif case == 'NFTOrg':
+                w = wg
+                a = 1
+            elif case == 'NFTConv':
+                w = wc
+                q = 0
+                s = 0
+            else:
+                print('Case not recognized')
 
-        # Retail price is known since we know p* from stage4game, yes?
-        retail_price = p
-
-        retailer_profit = (retail_price - wholesale_price) * consumer_demand
-        return retailer_profit
-
-
-    #consumer = Player()
-    #consumer.utility = consumer_utility_function(cases[0[)
-    #retailer = Player()
-    #retailer.utility = retailer_profit_function(cases[0])
-    # farmer = Player()
-    # farmer.utilty = farmer_profit_function(cases[0])
-
-# Function to calculate farmer_profit pi_f in a given case for Stage2&3Games
-def farmer_profit_function(*cases):
-    ''' Calculate a farmer's profut function in a given case'''
-
-    # Define w as marginal price increase for fair trade, wg as marginal price increase for organic
-    for case in cases:
-        # The fair trade cases
-        if case == 'FTOrg':
-            pass
-        elif case == 'FTConv':
-            wg = 0
-        # The non fair trade cases
-        elif case == 'NFTOrg':
-            w = 0
-        elif case == 'NFTConv':
-            w = 0
-            wg = 0
-        else:
-            print('Case not recognized')
-
-        # TODO figure out how to store these Symbol things so all functions have access to them
-        Qhat = Symbol('Qhat')
-        b = Symbol('b')
-        wc = Symbol('wc')
-        w = Symbol('w')
-        wg = Symbol('wg')
-
-        wholesale_price = wc + w + wg
-        production_cost = a + b*Q
-        quantity_sold = Q
-        quantity_produced = Qhat
+        utility = p*q - w*q # Retailer profit function
+        return utility
 
 
-        farmer_profit = wholesale_price*quantity_sold - production_cost*quantity_produced
-        print('In case {}, farmer profit function is '.format(case) + str(farmer_profit))
-        return farmer_profit
+        elif player == 'Farmer':
+            if case == 'FTOrg':
+                w =
+            elif case == 'FTConv':
+                p =
+                w =
+                q = 0
+                a = 1
+            # The non fair trade cases
+            elif case == 'NFTOrg':
+                w = wg
+                a = 1
+            elif case == 'NFTConv':
+                w = wc
+                q = 0
+                s = 0
+            else:
+                print('Case not recognized')
 
-farmer_profit_function(cases[0])
+        farmer_profit_function = (w*q)-(a+b*qhat)*qhat
+        utility = farmer_profit_function
+        return utility
+
+        # TODO decide if we need to do this for customer, since we dont have to optimize cust utility function
+        '''
+        elif player == 'Consumer':
+            if case == 'FTOrg':
+                w =
+            elif case == 'FTConv':
+                p =
+                w =
+                q = 0
+                a = 1
+            # The non fair trade cases
+            elif case == 'NFTOrg':
+                w = wg
+                a = 1
+            elif case == 'NFTConv':
+                w = wc
+                q = 0
+                s = 0
+            else:
+                print('Case not recognized')
+
+        utility =   # Consumer utility function
+        return utility
+        '''
+
 
     # farmer = Player
     # farmer_profit_function = farmer_profit_function(case[0])
@@ -353,6 +327,110 @@ def find_max(function, variable, **kwargs):
         solution = None
         # What type of thing is a solution to a game? Its the circumstances
         return solution
+
+    # Function to calculate consumer_demand Q in a given case for Stage4Games
+    def consumer_demand_function(*cases):
+        ''' Function to determine Q in a given case for a given set of params q, a, s, and k
+            Example function call would be consumer_demand_function(cases[0]) for FTOrg case'''
+
+        for case in cases:
+            # The fair trade cases
+            if case == 'FTOrg':
+                q = q
+            elif case == 'FTConv':
+                q = 0  # since
+                a = 1
+            # The non fair trade cases
+            elif case == 'NFTOrg':
+                a = 1
+            elif case == 'NFTConv':
+                q = 0
+                s = 0
+            else:
+                print('Case not recognized')
+
+            # Q is consumer demand function that is true in all cases. Values of a, s,
+            Q = k + q - p + (a * s)
+
+            print('The consumer demand in case {} '.format(case) + 'is ' + str(Q))
+            return Q
+
+    # Function to calculate retailer_profit pi_r in a given case for Stage4Games
+    def retailer_profit_function(*cases):
+        w = Symbol('w')
+        wg = Symbol('wg')
+        wc = Symbol('wg')
+        w = wg + wc
+        wholesale_price = None
+        for case in cases:
+            # The fair trade cases
+            if case == 'FTOrg':
+                consumer_demand = consumer_demand_function(case)
+                wholesale_price = w
+            elif case == 'FTConv':
+                consumer_demand = consumer_demand_function(case)
+                wholesale_price = w
+            # The non fair trade cases
+            elif case == 'NFTOrg':
+                consumer_demand = consumer_demand_function(case)
+                wholesale_price = wg
+            elif case == 'NFTConv':
+                consumer_demand = consumer_demand_function(case)
+                wholesale_price = wc
+            else:
+                print('Case not recognized')
+
+            # Retail price is known since we know p* from stage4game, yes?
+            retail_price = p
+
+            retailer_profit = (retail_price - wholesale_price) * consumer_demand
+            return retailer_profit
+
+
+            # consumer = Player()
+            # consumer.utility = consumer_utility_function(cases[0[)
+            # retailer = Player()
+            # retailer.utility = retailer_profit_function(cases[0])
+            # farmer = Player()
+            # farmer.utilty = farmer_profit_function(cases[0])
+
+    # Function to calculate farmer_profit pi_f in a given case for Stage2&3Games
+    def farmer_profit_function(*cases):
+        ''' Calculate a farmer's profut function in a given case'''
+
+        # Define w as marginal price increase for fair trade, wg as marginal price increase for organic
+        for case in cases:
+            # The fair trade cases
+            if case == 'FTOrg':
+                pass
+            elif case == 'FTConv':
+                wg = 0
+            # The non fair trade cases
+            elif case == 'NFTOrg':
+                w = 0
+            elif case == 'NFTConv':
+                w = 0
+                wg = 0
+            else:
+                print('Case not recognized')
+
+            # TODO figure out how to store these Symbol things so all functions have access to them
+            Qhat = Symbol('Qhat')
+            b = Symbol('b')
+            wc = Symbol('wc')
+            w = Symbol('w')
+            wg = Symbol('wg')
+
+            wholesale_price = wc + w + wg
+            production_cost = a + b * Q
+            quantity_sold = Q
+            quantity_produced = Qhat
+
+            farmer_profit = wholesale_price * quantity_sold - production_cost * quantity_produced
+            print('In case {}, farmer profit function is '.format(case) + str(farmer_profit))
+            return farmer_profit
+
+    farmer_profit_function(cases[0])
 
 
 # Instantiate all exogenous variables
