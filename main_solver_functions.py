@@ -56,16 +56,51 @@ def get_decision_variables(*args):
     return decision_vars
 
 def get_objective_func(*args, **kwargs):
-
     ''' Get the objective function through arguments or by user input if no args
-        Objective function is:
-            When the argument is one or more functions
-                *args like P*Q - 1
-            When the argument is one or more k,v pairs of identifier and function
-                **kwardgs like tim_util = x * 2'''
+    :param args: like P*Q - 1
+    :param kwargs: like tim_util = P*Q - 1
+    :return: objective function as an equation (symbols)
+    :rtype: equation representing a function (y = m*x**2 + b)'''
+
+    obj_func_list = []
+    obj_func_dict = {}
 
     if args is None:
-        obj_func_list = input('Please enter your exogenous vaiables, as lowercase letters')
+        # Passed neither args nor kwargs
+        if kwargs is None:
+            user_input = input('Enter one or more obj functions as args or kwargs')# Get functions through the user keyboard as items or k,v pairs
+            for item in user_input:
+                obj_func_list.append(item)
+
+        # Passed only kwargs
+        elif kwargs is not None:
+            for key, value in kwargs.items():
+                print("The value of {} is {}".format(key, value))
+                # Put the keys and values into a dictionary
+                obj_func_dict[key] = value
+                # Put the dict inside the list of obj functions
+                obj_func_list.append(obj_func_dict.copy())
+
+    elif args is not None:
+        # Passed only args
+        if kwargs is None:
+            for arg in args:
+                obj_func_list.append(args)
+
+        # Passed both args and kwargs
+        elif kwargs is not None:
+            for arg in args:
+                obj_func_list.append(args)
+            for key, value in kwargs.items():
+                # Put the keys and values into a dictionary
+                obj_func_dict[key] = value
+                # Put the dict inside the list of obj functions
+                obj_func_list.append(obj_func_dict.copy())
+
+
+
+    if args is None:
+        obj_func_list = input('Please enter your exogenous variables, as lowercase letters')
     else:
         # How to handle being passed multiple objective functions?
         obj_func_list = []
@@ -73,8 +108,12 @@ def get_objective_func(*args, **kwargs):
             print('adding {} to list or dict of objective functions'.format(str(arg)))
             obj_func_list.append(arg)
 
-        for key, value in kwargs.items():
-            print("The value of {} is {}".format(key, value))
+    if kwargs is None:
+    obj_func_dict = {}
+    for key, value in kwargs.items():
+        print("The value of {} is {}".format(key, value))
+        obj_func_dict[key] = value
+
 
     print('Functions are are {}'.format([func for func in obj_func_list]))
 
