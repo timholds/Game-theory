@@ -207,28 +207,6 @@ class Game():
         result = deciding_player.optimize_utility()
         return result
 
-# TODO resolve NthStageGame to be able to work as tempalte for FirstStageGame and delete FirstStageGame code
-class NthStageGame(Game, cases[0], player1, player2, decision_player):
-    # Each stage has players
-    p1 = player1
-    p2 = player2
-    # Each stage has its own payoffs - set the payoffs by
-    p1.generate_utility_function()
-
-class FirstStageGame(Game, decision_player):
-
-    def __init__(self):
-        Game.__init__(self)
-
-
-    # Set the utility for the player objects
-    def set_utility(self):
-        self.retailer.utility = generate_utilty_function(cases[0], 'Retailer')
-        self.consumer.utility = generate_utilty_function(cases[0], 'Consumer')
-
-    result = Game().solve_game(decision_player)
-    return result
-
 # Use the substitutions in the solver algorithm. thats what it means to solve a subgame? - get the constrained maximum
 def substitute_functions(mainfunction, oldvar, newvar, newvarLemma):
     ''' A substitution machine for functions'''
@@ -255,6 +233,28 @@ def main():
     FirstStageGame(game, 'Retailer').set_utility()
 
 
+
+# TODO resolve NthStageGame to be able to work as tempalte for FirstStageGame and delete FirstStageGame code
+class NthStageGame(Game, cases[0], player1, player2, decision_player):
+    # Each stage has players
+    p1 = player1
+    p2 = player2
+    # Each stage has its own payoffs - set the payoffs by
+    p1.generate_utility_function()
+
+class FirstStageGame(Game, decision_player):
+
+    def __init__(self):
+        Game.__init__(self)
+
+
+    # Set the utility for the player objects
+    def set_utility(self):
+        self.retailer.utility = generate_utilty_function(cases[0], 'Retailer')
+        self.consumer.utility = generate_utilty_function(cases[0], 'Consumer')
+
+    result = Game().solve_game(decision_player)
+    return result
 
 
 # ---------- A bunch of optimization stuff that might be better done with a library
