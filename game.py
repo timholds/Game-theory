@@ -198,6 +198,8 @@ class Player():
 class Game():
     ''' A Game Object for a single two player game'''
 
+    # Should initialize and store the exogenous variables here
+
     def __init__(self):
         self.retailer = Player()
         self.consumer = Player()
@@ -233,7 +235,6 @@ def main():
     FirstStageGame(game, 'Retailer').set_utility()
 
 
-
 # TODO resolve NthStageGame to be able to work as tempalte for FirstStageGame and delete FirstStageGame code
 class NthStageGame(Game, cases[0], player1, player2, decision_player):
     # Each stage has players
@@ -256,13 +257,11 @@ class FirstStageGame(Game, decision_player):
     result = Game().solve_game(decision_player)
     return result
 
-
 # ---------- A bunch of optimization stuff that might be better done with a library
 # TODO figure out what data structure to pass around constraints with
 def unconstrained_optimization(function, variable):
     deriv = diff(function, variable)
     return deriv
-
 
 def fits(*args):
     for arg in args:
