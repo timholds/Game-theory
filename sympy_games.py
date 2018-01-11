@@ -1,5 +1,5 @@
 # File to experiment with turning user keyboard input into sympy strings
-from sympy import symbols, diff, solve, Piecewise, Eq
+from sympy import symbols, diff, solve, Piecewise, Eq, simplify
 from sympy.abc import *
 
 f, g, P, Q, Qbar, Qstar, Qhat = symbols("f g P Q Qbar Qstar Qhat")
@@ -19,7 +19,6 @@ def solve_this(obj_func= P*Q - w*Q - wg*Q, dec_var=P,  out_var=Q, lemmaEq= k - P
     obj_func_post_sub = obj_func_pre_sub.subs(out_var, lemma)
     print('objective function (post sub) is {}'.format(obj_func_post_sub))
 
-
     deriv = diff(obj_func_post_sub, dec_var)
     #print('Deriv: {}'.format(deriv))
 
@@ -28,12 +27,15 @@ def solve_this(obj_func= P*Q - w*Q - wg*Q, dec_var=P,  out_var=Q, lemmaEq= k - P
 
     #print('solution is {}'.format(solution))
     # Evaluate the lemma when the decision variable is maximized
-    #print('the starting lemma function is {} '.format(lemma))
     if solution is type(list):
         solution = solution[0]
     #print('solution  is {}'.format(solution))
-    lemma_plugged = lemma.subs(dec_var, solution)
-    print('The lemma func {}={} evaluated at {}*={} is {}({}*)={}'.format(out_var, lemma, dec_var, solution, out_var, dec_var, lemma_plugged))
+    lemma_plugged = lemma.subs(dec_var, solution[0])
+    obj_plugged = obj_func_post_sub.subs(dec_var, solution[0])
+    print('The func pi_f evaluated at {}* = {} '.format(dec_var, obj_plugged))
+    smp = simplify(obj_plugged)
+    print(smp)
+    #print('The lemma func {}={} evaluated at {}* = {} is {}({}*)={}'.format(out_var, lemma, dec_var, solution[0], out_var, dec_var, lemma_plugged))
 
     #print()
     return dec_var, solution, lemma_plugged
@@ -42,7 +44,6 @@ def solve_this(obj_func= P*Q - w*Q - wg*Q, dec_var=P,  out_var=Q, lemmaEq= k - P
 #if 'case' == '1':
 pi_r = P*Q - w*Q
 pi_f = w*Q - a*Q
-decision_var = P
 outvar = Q
 lems = k - P + s
 
@@ -50,12 +51,13 @@ lems = k - P + s
 
 # Retailer optimizes profit by choosing p
 print('Solving Game 4')
-FTC_g4 = solve_this(obj_func = pi_r, dec_var=decision_var, out_var=outvar, lemmaEq=lems)
-print('Solution from Fait Trade Conventional Game 4 was {}*={}'.format(decision_var, FTC_g4[1]))
+FTC_g4 = solve_this(obj_func = pi_r, dec_var=P, out_var=outvar, lemmaEq=lems)
+print('Solution from Fair Trade Conventional Game 4 was {}* = {}, {}({})* = {}'.format(P, FTC_g4[1][0], outvar, P, FTC_g4[2]))
 print()
 print('Solving Game 3')
-print('FTC_g4[1][0] is P={}'.format(FTC_g4[1][0]))
-FTC_g3 = solve_this(obj_func = pi_f, dec_var=Q, out_var= P, lemmaEq= FTC_g4[1][0])
+print('FTC_g4[1][0] is Q(P*)={}'.format(FTC_g4[2]))
+FTC_g3 = solve_this(obj_func = pi_f, dec_var=w, out_var= Q, lemmaEq= FTC_g4[2])
+
 
 # Define the farmers profit function as a sympy piacewise expression
 # so we can call it as main_func in substitute(main_func, oldvar, varlemma)
